@@ -8,19 +8,25 @@ public class ObjectPool<T> {
     private List<T> availableObjects;
     private Supplier<T> createFunction;
     private BiFunction<T, Object[], T> resetFunction;
+    private int maxSize; // Maximum pool size
 
-    public ObjectPool(Supplier<T> createFunction, BiFunction<T, Object[], T> resetFunction) {
+    public ObjectPool(Supplier<T> createFunction, BiFunction<T, Object[], T> resetFunction, int maxSize) {
         this.createFunction = createFunction;
         this.resetFunction = resetFunction;
+        this.maxSize = maxSize;
         activeObjects = new ArrayList<>();
         availableObjects = new ArrayList<>();
     }
 
     public T get() {
         if (availableObjects.isEmpty()) {
-            T newObj = createFunction.get();
-            activeObjects.add(newObj);
-            return newObj;
+            if (activeObjects.size() < maxSize) {
+                T newObj = createFunction.get();
+                activeObjects.add(newObj);
+                return newObj;
+            } else {
+                return null; // Pool is full
+            }
         } else {
             T obj = availableObjects.remove(availableObjects.size() - 1);
             activeObjects.add(obj);
@@ -40,12 +46,29 @@ public class ObjectPool<T> {
     }
 
     public static void main(String[] args) {
+        // Test the object pool
         ObjectPool<Integer> pool = new ObjectPool<>(
             () -> 0, // Create function
-            (obj, resetArgs) -> obj // Reset function
+            (obj, resetArgs) -> obj, // Reset function
+            5 // Maximum pool size
         );
 
-        Integer obj = pool.get();
-        pool.free(obj);
+        // Get and free objects
+        Integer obj1 = pool.get();
+        if (obj1 != null) {
+            System.out.println("Got object: " + obj1);
+            pool.free(obj1);
+        }
+
+        // Test pool full scenario
+        for (int i = 0; i < 10; i++) {
+            Integer obj = pool.get();
+            if (obj != null) {
+                System.out.println("Got object: " + obj);
+                pool.free(obj);
+            } else {
+                System.out.println("Pool is full, cannot get object.");
+            }
+        }
     }
 }
