@@ -4,39 +4,35 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 public class ObjectPool<T> {
-    private List<T> activeObjects;
-    private List<T> availableObjects;
-    private Supplier<T> createFunction;
-    private BiFunction<T, Object[], T> resetFunction;
-    private int maxSize; // Maximum pool size
+    private final List<T> activeObjects = new ArrayList<>();
+    private final List<T> availableObjects = new ArrayList<>();
+    private final Supplier<T> createFunction;
+    private final BiFunction<T, Object[], T> resetFunction;
+    private final int maxSize;
 
     public ObjectPool(Supplier<T> createFunction, BiFunction<T, Object[], T> resetFunction, int maxSize) {
         this.createFunction = createFunction;
         this.resetFunction = resetFunction;
         this.maxSize = maxSize;
-        activeObjects = new ArrayList<>();
-        availableObjects = new ArrayList<>();
     }
 
     public T get() {
-        if (availableObjects.isEmpty()) {
-            if (activeObjects.size() < maxSize) {
-                T newObj = createFunction.get();
-                activeObjects.add(newObj);
-                return newObj;
-            } else {
-                return null; // Pool is full
-            }
-        } else {
+        if (availableObjects.isEmpty() && activeObjects.size() < maxSize) {
+            T newObj = createFunction.get();
+            activeObjects.add(newObj);
+            return newObj;
+        } else if (!availableObjects.isEmpty()) {
             T obj = availableObjects.remove(availableObjects.size() - 1);
             activeObjects.add(obj);
             return obj;
+        } else {
+            return null; // Pool is full
         }
     }
 
     public void free(T obj) {
         if (activeObjects.remove(obj)) {
-            resetFunction.apply(obj, new Object[0]); // You can pass additional arguments if needed
+            resetFunction.apply(obj, new Object[0]);
             availableObjects.add(obj);
         }
     }
