@@ -56,8 +56,18 @@ public class ObjectPool<T> {
         scanner.nextLine(); // Consume newline
 
         ObjectPool<Integer> pool = new ObjectPool<>(
-            () -> 0, // Create function
-            obj -> obj, // Reset function
+            new CreateFunction<Integer>() {
+                @Override
+                public Integer create() {
+                    return 0; // Create function
+                }
+            },
+            new ResetFunction<Integer>() {
+                @Override
+                public Integer reset(Integer obj) {
+                    return obj; // Reset function
+                }
+            },
             maxSize
         );
 
