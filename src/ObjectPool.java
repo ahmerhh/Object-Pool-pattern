@@ -2,30 +2,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-interface CreateFunction<T> {
+interface CreateFunction_test<T> {
     T create();
 }
 
-interface ResetFunction<T> {
+interface ResetFunction_test<T> {
     T reset(T obj);
 }
 
 public class ObjectPool<T> {
     private List<T> activeObjects = new ArrayList<>();
     private List<T> availableObjects = new ArrayList<>();
-    private CreateFunction<T> createFunction;
-    private ResetFunction<T> resetFunction;
+    private CreateFunction_test<T> CreateFunction_test;
+    private ResetFunction_test<T> ResetFunction_test;
     private int maxSize;
 
-    public ObjectPool(CreateFunction<T> createFunction, ResetFunction<T> resetFunction, int maxSize) {
-        this.createFunction = createFunction;
-        this.resetFunction = resetFunction;
+    public ObjectPool(CreateFunction_test<T> CreateFunction_test, ResetFunction_test<T> ResetFunction_test, int maxSize) {
+        this.CreateFunction_test = CreateFunction_test;
+        this.ResetFunction_test = ResetFunction_test;
         this.maxSize = maxSize;
     }
 
     public T get() {
         if (availableObjects.isEmpty() && activeObjects.size() < maxSize) {
-            T newObj = createFunction.create();
+            T newObj = CreateFunction_test.create();
             activeObjects.add(newObj);
             return newObj;
         } else if (!availableObjects.isEmpty()) {
@@ -39,7 +39,7 @@ public class ObjectPool<T> {
 
     public void free(T obj) {
         if (activeObjects.remove(obj)) {
-            resetFunction.reset(obj);
+            ResetFunction_test.reset(obj);
             availableObjects.add(obj);
         }
     }
@@ -56,13 +56,13 @@ public class ObjectPool<T> {
         scanner.nextLine(); // Consume newline
 
         ObjectPool<Integer> pool = new ObjectPool<>(
-            new CreateFunction<Integer>() {
+            new CreateFunction_test<Integer>() {
                 @Override
                 public Integer create() {
                     return 0; // Create function
                 }
             },
-            new ResetFunction<Integer>() {
+            new ResetFunction_test<Integer>() {
                 @Override
                 public Integer reset(Integer obj) {
                     return obj; // Reset function

@@ -4,8 +4,23 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Scanner;
 
+// CreateFunction defines a method to create objects
+class CreateFunction<T> {
+    T create() {
+        // Provide your implementation here
+        return null;
+    }
+}
 
+// ResetFunction defines a method to reset objects
+class ResetFunction<T> {
+    T reset(T obj, Object... args) {
+        // Provide your implementation here
+        return obj;
+    }
+}
 
+// ObjectPool class that manages object pooling
 public class ObjectPool_main<T> {
     private List<T> activeObjects = new ArrayList<>();
     private List<T> availableObjects = new ArrayList<>();
@@ -28,7 +43,7 @@ public class ObjectPool_main<T> {
     public T get(Object... args) {
         T obj;
         if (!availableObjects.isEmpty()) {
-            obj = opts.reset.reset(availableObjects.remove(availableObjects.size() - 1), args);
+            obj = opts.reset.reset(availableObjects.remove(availableObjects.size() - 1)); // Remove args here
         } else {
             obj = opts.create.create();
         }
@@ -80,7 +95,7 @@ public class ObjectPool_main<T> {
             collectFreq
         );
 
-        ObjectPoolMain<Integer> pool = new ObjectPoolMain<>(opts);
+        ObjectPool_main<Integer> pool = new ObjectPool_main<>(opts);
 
         // Testing the object pool
         Integer obj1 = pool.get();
@@ -94,6 +109,7 @@ public class ObjectPool_main<T> {
     }
 }
 
+// ObjectPoolOpts defines the options for object pool configuration
 class ObjectPoolOpts<T> {
     int initialSize;
     int maxSize;
