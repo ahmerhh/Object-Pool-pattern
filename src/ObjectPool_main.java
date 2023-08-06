@@ -2,14 +2,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Scanner;
 
-interface CreateFunction<T> {
-    T create();
-}
 
-interface ResetFunction<T> {
-    T reset(T obj, Object... args);
-}
 
 public class ObjectPool_main<T> {
     private List<T> activeObjects = new ArrayList<>();
@@ -21,7 +16,7 @@ public class ObjectPool_main<T> {
         this.opts = opts;
 
         for (int i = 0; i < opts.initialSize; ++i) {
-        	availableObjects.add(opts.create());
+            availableObjects.add(opts.create.create());
         }
 
         if (opts.collectFreq != -1) {
@@ -33,9 +28,9 @@ public class ObjectPool_main<T> {
     public T get(Object... args) {
         T obj;
         if (!availableObjects.isEmpty()) {
-            obj = opts.reset(availableObjects.remove(availableObjects.size() - 1), args);
+            obj = opts.reset.reset(availableObjects.remove(availableObjects.size() - 1), args);
         } else {
-            obj = opts.create(args);
+            obj = opts.create.create();
         }
 
         activeObjects.add(obj);
@@ -66,15 +61,26 @@ public class ObjectPool_main<T> {
     }
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter initial pool size: ");
+        int initialSize = scanner.nextInt();
+
+        System.out.print("Enter maximum pool size: ");
+        int maxSize = scanner.nextInt();
+
+        System.out.print("Enter collect frequency (-1 for no collection): ");
+        int collectFreq = scanner.nextInt();
+
         ObjectPoolOpts<Integer> opts = new ObjectPoolOpts<>(
-            0, // initialSize
-            100, // maxSize
-            () -> 0, // create function
-            (obj, resetArgs) -> obj, // reset function
-            -1 // collectFreq
+            initialSize,
+            maxSize,
+            new CreateFunction<>(),
+            new ResetFunction<>(),
+            collectFreq
         );
 
-        ObjectPool_main <Integer> pool = new ObjectPool_main <>(opts);
+        ObjectPoolMain<Integer> pool = new ObjectPoolMain<>(opts);
 
         // Testing the object pool
         Integer obj1 = pool.get();
@@ -83,6 +89,8 @@ public class ObjectPool_main<T> {
 
         // Dispose the pool
         pool.dispose();
+
+        scanner.close();
     }
 }
 
