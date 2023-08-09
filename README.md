@@ -9,7 +9,7 @@ $ npm install --save @ahmerhh/object-pool-pattren
 ```
 
 
-## Code 1 - Basic Object Pool
+## Object Pool (Main) - Basic Object Pool
 
 The first example (`ObjectPool_main`) demonstrates a straightforward implementation of an object pool using interfaces and basic object management functions. The example includes an `ObjectPool` class that allows objects to be acquired from and released back to the pool.
 
@@ -18,7 +18,7 @@ The first example (`ObjectPool_main`) demonstrates a straightforward implementat
 - Acquire objects from the pool
 - Release objects back to the pool
 
-## Code 2 - Advanced Object Pool
+## Object Pool - Advanced Object Pool
 
 The second example (`ObjectPool`) builds upon the concepts demonstrated in `ObjectPool_main` to create an extended object pool with advanced features. It introduces an `ObjectPool_main` class that includes automatic object collection, customizable configuration options, and object reset using the `ResetFunction` interface.
 
